@@ -4,9 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wensocket test rig</title>
+    <style>
+        #log{background:#000; padding:10px; height:300px; overflow:auto; color:#fff}
+        body{font-family:arial; padding:10px; background:#f0f0f0 }
+        .status-on {color:blue}
+        .status-off{color:red}
+        </style>
 </head>
 <body>
     <h1> websocket Broadcast Console
     </h1>
+    <p id="status" class="status-off">Connecting.....</p>
+    <form id="message-form">
+        <input id="message-input" type="text"
+        placeholder="Send Cargo....." required/>
+        <button type="submit">Deploy Message</button>
+    </form>
+    <h3> Live strem logs:</h3>
+    <pre id="log"></pre>
 </body>
+<script>
+    const statusEl=document.getElementById("status");
+    const log=document.getElementById("log");
+    const input=document.getElementById("message-input");
+    const socket=new WebSocket('ws://localhost:8080');
+    const appendlog=(label,message)=>{
+        const entry=`${new Date().toLocaleDateString()}
+        ${label}\n`
+        log.textContent=entry+log.textContent;
+    }
+    socket.addEventListener('open',()=>{
+        statusEl.textContent='CONNECTED:ws:/localhost:8080'
+        statusEl.className="status-on";
+        appendLog('[SYSTEM]','Tunnel Esatblished.');
+    });
+    socket.addEventListener('close',()=>{
+        statusEl.textContent='DISCONNECTED'
+        statusEl.className="status-off";
+        appendLog('[SYSTEM]','Tunnel Collapsed.');
+    });
+    </script>
+
 </html>
